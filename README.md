@@ -1,16 +1,90 @@
-# projects_dart
+# Great Places
+Aplicativo para selecionar seu local favorito no mapa e a foto dele
 
-A new Flutter project.
+# Feature
+- Aprendi a trabalhar com imagens salvando tanto local quanto o caminho no Squlite
+- Para lidar com [path](https://pub.dev/packages/path) e [image](https://pub.dev/packages/image_picker) usei pacotes do proprio flutter
+- Path foi usado para pegar pegar o base name da imagem e salvar uma imagem na memoria com copy
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+```dart
+ final appDir = await pathProvider
+        .getApplicationDocumentsDirectory(); //pegando o caminho do diretorio
+ final baseName =
+        pathDart.basename(fileImg!.path); // pegando o nome base da imagem
+ final savedImg = await fileImg?.copy('${appDir.path}/$baseName');
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+```
+
+##
+- Utilizei o pacote [sqflite](https://pub.dev/packages/sqflite)
+- Com ele consigo criar banco com squlite no device
+- Eu preciso retornar sempre uma nova instancia do banco,se usar callback nao resolve
+- Por isso crirei uma funcao para instanciar o banco e com retorno dela eu inseria ou pegava os dados
+- Para lidar com formularios e ao mesmo tempo validacao preciso usar o onChanged e o onSubmited como exemplo abaixo
+
+```dart
+class DatabaseSquelite {
+
+  static Future<Database> instanceDatabase() async {
+    final databasePath = await getDatabasesPath();
+    final path = join(databasePath, "great.db");
+    return (await openDatabase(path, version: 1,
+        onCreate: (Database db, int verions) async {
+      await db.execute(
+          'CREATE TABLE  Places (id INTEGER PRIMARY KEY, title TEXT,file TEXT,latitude REAL,longitude REAL, address TEXT)');
+    }));
+  }
+
+  static Future<void> insertValue(
+      {required String nameTable, required Map<String, dynamic> data}) async {
+    final database = await instanceDatabase();
+    database.insert(nameTable, data);
+  }
+
+  static Future<List<Map<String, dynamic>>> returnPlaces(
+      String nameTable) async {
+    final database = await instanceDatabase();
+    return database.query(nameTable);
+  }
+}
+
+
+//place form
+validateForm() {
+    setState(() {
+      enableButton = inputController.text.isNotEmpty &&
+          fileImg != null &&
+          location != null;
+    });
+  }
+  
+void handleSubmit() async {
+    if (!enableButton) return;
+    final address = await ConstantPlaceLocation.urlGeocoding(
+        LatLng(location!.latitude, location!.longitude));
+
+    Provider.of<GreatePlacesProvider>(context, listen: false).addPlace(
+        title: inputController.text,
+        img: fileImg!,
+        longitude: location!.longitude,
+        latitude: location!.latitude,
+        address: address);
+    Navigator.of(context).pop();
+  }
+
+
+
+ TextField(
+           decoration: const InputDecoration(label: Text("Titulo")),
+           controller: inputController  
+           onChanged: (text) {
+                    setState(() {});
+                  },
+                  onSubmitted: validateForm(),
+          ),
+
+```
