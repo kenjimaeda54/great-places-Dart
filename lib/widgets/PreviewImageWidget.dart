@@ -40,7 +40,7 @@ class _PreviewImageWidgetState extends State<PreviewImageWidget> {
       children: [
         Container(
           width: 150,
-          height: 90,
+          height: 110,
           alignment: Alignment.center,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.black12, width: 1)),

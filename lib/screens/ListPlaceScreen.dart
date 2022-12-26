@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projects_dart/models/PlaceModel.dart';
 import 'package:projects_dart/providers/GreatPlacesProvider.dart';
 import 'package:projects_dart/utils/ConstantRoute.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,12 @@ class ListPlaceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void handleNavigation() {
+    void handleNavigation([PlaceModel? place]) {
+      if (place != null) {
+        Navigator.of(context)
+            .pushNamed(ConstantRoute.detailsPlace, arguments: place);
+        return;
+      }
       Navigator.of(context).pushNamed(ConstantRoute.placeForm);
     }
 
@@ -40,6 +46,13 @@ class ListPlaceScreen extends StatelessWidget {
                           ),
                           title: Text(
                               places.shouldReturnPlaceByIndex(index).title),
+                          subtitle: Text(places
+                                  .shouldReturnPlaceByIndex(index)
+                                  .location
+                                  ?.address ??
+                              "Nenhum endereço"),
+                          onTap: () => handleNavigation(
+                              places.shouldReturnPlaceByIndex(index)),
                         ),
                       ),
               ),

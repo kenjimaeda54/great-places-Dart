@@ -10,7 +10,7 @@ class DatabaseSquelite {
     return (await openDatabase(path, version: 1,
         onCreate: (Database db, int verions) async {
       await db.execute(
-          'CREATE TABLE  Places (id INTEGER PRIMARY KEY, title TEXT,file TEXT)');
+          'CREATE TABLE  Places (id INTEGER PRIMARY KEY, title TEXT,file TEXT,latitude REAL,longitude REAL, address TEXT)');
     }));
   }
 

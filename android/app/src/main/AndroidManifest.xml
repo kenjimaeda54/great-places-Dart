@@ -4,6 +4,8 @@
         android:label="projects_dart"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+       <meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyC5HWwgYIqBXNS_e5K_Yiazdu3FGn8Ro-E"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

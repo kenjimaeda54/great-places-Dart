@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:projects_dart/providers/GreatPlacesProvider.dart';
+import 'package:projects_dart/utils/ConstantPlaceLocation.dart';
 import 'package:projects_dart/widgets/PreviewImageWidget.dart';
 import 'package:provider/provider.dart';
 
@@ -16,22 +18,52 @@ class PlaceFormScreen extends StatefulWidget {
 
 class _PlaceFormScreenState extends State<PlaceFormScreen> {
   File? fileImg;
+  LatLng? location;
+  bool enableButton = false;
   TextEditingController inputController = TextEditingController();
 
   void selectedImage(File img) {
     fileImg = img;
+    validateForm();
   }
 
-  void handleSubmit() {
-    if (inputController.text.isEmpty && fileImg == null) return;
-    Provider.of<GreatePlacesProvider>(context, listen: false)
-        .addPlace(title: inputController.text, img: fileImg!);
+  void selectedLocation(LatLng selectedLocation) {
+    location = selectedLocation;
+    validateForm();
+    //retirar o focus e assim teclado não abre
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  validateForm() {
+    print("entrou");
+    print(inputController.text);
+    setState(() {
+      enableButton = inputController.text.isNotEmpty &&
+          fileImg != null &&
+          location != null;
+    });
+  }
+
+  void handleSubmit() async {
+    if (!enableButton) return;
+    final address = await ConstantPlaceLocation.urlGeocoding(
+        LatLng(location!.latitude, location!.longitude));
+
+    Provider.of<GreatePlacesProvider>(context, listen: false).addPlace(
+        title: inputController.text,
+        img: fileImg!,
+        longitude: location!.longitude,
+        latitude: location!.latitude,
+        address: address);
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset:
+          false, //isso aqui ajuda evitar overflow quando teclado sobe,assim a parte
+      //de baixo não aconpamnha
       appBar: AppBar(
         title: const Text("Novo lugar"),
       ),
@@ -44,28 +76,34 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
                 TextField(
                   decoration: const InputDecoration(label: Text("Titulo")),
                   controller: inputController,
+                  //precisa do onChanged e onSubmited
+                  //por causa da validação no
+                  onChanged: (text) {
+                    setState(() {});
+                  },
+                  onSubmitted: validateForm(),
                 ),
                 const SizedBox(height: 20),
                 PreviewImageWidget(selectedImage),
                 const SizedBox(
                   height: 20,
                 ),
-                const LocationInput()
+                LocationInput(selectedLocation)
               ]),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton(
-                onPressed: handleSubmit,
-                style: ButtonStyle(
-                    //colocar padding em button
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(10))),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [Icon(Icons.add), Text("Adicionar")],
-                )),
+              onPressed: enableButton ? handleSubmit : null,
+              style: ButtonStyle(
+                  //colocar padding em button
+                  padding: MaterialStateProperty.all(const EdgeInsets.all(10))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [Icon(Icons.add), Text("Adicionar")],
+              ),
+            ),
           )
         ],
       ),
