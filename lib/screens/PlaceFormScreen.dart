@@ -35,8 +35,6 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
   }
 
   validateForm() {
-    print("entrou");
-    print(inputController.text);
     setState(() {
       enableButton = inputController.text.isNotEmpty &&
           fileImg != null &&
