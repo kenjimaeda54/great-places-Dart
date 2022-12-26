@@ -2,10 +2,9 @@
 Aplicativo para selecionar seu local favorito no mapa e a foto dele
 
 # Feature
-- Aprendi a trabalhar com imagens salvando tanto local quanto o caminho no Squlite
-- Para lidar com [path](https://pub.dev/packages/path) e [image](https://pub.dev/packages/image_picker) usei pacotes do proprio flutter
-- Path foi usado para pegar pegar o base name da imagem e salvar uma imagem na memoria com copy
-
+- Aprendi a trabalhar com imagens salvando tanto local quanto o caminho no Squelite
+- Para lidar com [path](https://pub.dev/packages/path) e [image](https://pub.dev/packages/image_picker) usei pacotes do próprio flutter
+- Path foi usado para pegar o base nane da imagem é salvar uma imagem na memória com copy
 
 
 ```dart
@@ -21,10 +20,10 @@ Aplicativo para selecionar seu local favorito no mapa e a foto dele
 
 ##
 - Utilizei o pacote [sqflite](https://pub.dev/packages/sqflite)
-- Com ele consigo criar banco com squlite no device
-- Eu preciso retornar sempre uma nova instancia do banco,se usar callback nao resolve
-- Por isso crirei uma funcao para instanciar o banco e com retorno dela eu inseria ou pegava os dados
-- Para lidar com formularios e ao mesmo tempo validacao preciso usar o onChanged e o onSubmited como exemplo abaixo
+- Com ele consigo criar banco com squelite no device
+- Preciso retornar sempre uma nova instância do banco, se usar callback não resolve
+- Por isso criei uma função para instanciar o banco e com retorno dela eu inseria ou pegava os dados
+- Para lidar com formulários e, simultaneamente, validação preciso usar o onChanged e o onSubmited como exemplo abaixo
 
 ```dart
 class DatabaseSquelite {
